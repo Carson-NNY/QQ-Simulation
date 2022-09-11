@@ -12,10 +12,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Scanner;
 
-/**
- * @author Carson
- * @Version
- */
+
 public class MultipleMessagesThread implements Runnable{
 
 
@@ -23,7 +20,7 @@ public class MultipleMessagesThread implements Runnable{
     public void run() {
         Message message = new Message();
         while(true){
-        System.out.println("请输入你要推送的消息(输入exit退出)");
+        System.out.println("Please enter the message you want to say (enter exit to exit)");
         String content = Utility.readString(100);
         if("exit".equalsIgnoreCase(content)){   break;}
         message.setMesType(MessageType.MESSAGE_CLIENT_AdsMessages);
@@ -41,7 +38,7 @@ public class MultipleMessagesThread implements Runnable{
 //                e.printStackTrace();
 //            }
 //        }
-            // 用另一种方法
+            // use another way
             HashMap<String, ServerConnectThread> hm = ManageServerThread.getHm();
             Iterator<String> iterator = hm.keySet().iterator();
             while(iterator.hasNext()){
