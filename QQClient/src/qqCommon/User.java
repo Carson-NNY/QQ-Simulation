@@ -2,10 +2,7 @@ package qqCommon;
 
 import java.io.Serializable;
 
-/**
- * @author Carson
- * @Version
- */
+
 public class User implements Serializable {
     private String userId;
     private String passwd;
