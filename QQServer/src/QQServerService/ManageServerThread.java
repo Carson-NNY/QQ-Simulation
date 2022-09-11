@@ -4,13 +4,11 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Iterator;
 
-/**
- * @author Carson
- * @Version
- */
+
 public class ManageServerThread {
 
-    // 思考：怎么把这种线程管理方式变成线程池模式？牵涉端口类多线程用不到线程池吗？
+    // Think about it: how to turn this thread management mode into thread pool mode? 
+// Do you need a thread pool for multithreading involving port classes?
 
     private static HashMap<String, ServerConnectThread> hm = new HashMap<>();
 
@@ -33,7 +31,7 @@ public class ManageServerThread {
     public static String getOnlineUser(){
 
 
-        // 遍历集合，取出key
+        // Iterate the collection and take out the key
         Iterator<String> iterator = hm.keySet().iterator();
         String userList ="";
         while(iterator.hasNext()){
