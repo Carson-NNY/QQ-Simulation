@@ -2,12 +2,10 @@ package qqCommon;
 
 import java.io.Serializable;
 
-/**
- * @author Carson
- * @Version
- */
+    //As an object stream is transmitted at both ends, serialization needs to be implemented
+
+
 public class Message implements Serializable
-    //作为对象流在两端传输，需要实现序列化
 {
     private  String sender;
     private String getter;
@@ -52,7 +50,7 @@ public class Message implements Serializable
         return scrPath;
     }
 
-    private static final long serialVersionUID = 1L;    // 增强稳定性
+    private static final long serialVersionUID = 1L;    // Enhance stability
 
 
     public Message(){}
