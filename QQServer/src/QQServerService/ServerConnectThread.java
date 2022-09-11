@@ -10,10 +10,6 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 
-/**
- * @author Carson
- * 该类的一个对象和某个客户端保持通信
- */
 public class ServerConnectThread extends Thread {
 
     private Socket socket;
@@ -31,36 +27,37 @@ public class ServerConnectThread extends Thread {
     }
 
     @Override
-    public void run() {     // 通过run方法实现保持在线并且可以多个用户操作
+    public void run() {     // Keep online state and can be operated by multiple users through the run method
 
-        while(true){ //思考QQserver和ServerConnectThread的while循环一起作用实现了端口+线程的保持数据传输功能
+        while(true){ //Thinking that the while loop of QQserver and ServerConnectThread work together 
+            // to realize the function of maintaining data transmission of port + thread.
 
             try {
-                System.out.println("Server端和Cient端" + userId + " 保持通信，读取数据中..");
+                System.out.println("Server side and Cient side" + userId + " Keep communicating and read the data..");
                 ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
                 Message message = (Message) ois.readObject();
 
                 if (message.getMesType().equals(MessageType.MESSAGE_GET_ONLINE_FRIEND)) {
-                    System.out.println(message.getSender() + " 请求在线用户列表");
+                    System.out.println(message.getSender() + " Request online user list");
                     String userList = ManageServerThread.getOnlineUser();
-                    // 把所有信息装进message类
+                    // Load all the information into the message class
                     Message message2 = new Message();
                     message2.setMesType(MessageType.MESSAGE_RET_ONLINE_FRIEND);
                     message2.setContent(userList);
                     message2.setGetter(message.getSender());
 
-                    // 获得输出流并且发送
+                    // Get the output stream and send it
                     ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
                     oos.writeObject(message2);
 
                 } else if (message.getMesType().equals(MessageType.MESSAGE_CLIENT_EXIT)) {
-                    System.out.println(message.getSender() + " 退出");
+                    System.out.println(message.getSender() + " exit");
                     ManageServerThread.removeOneThread(message.getSender());
                     socket.close();
                     break;
                 } else if (message.getMesType().equals(MessageType.MESSAGE_COMM_MES)) {
 
-                    // 如果息=消息的接收方没在线，先存起来
+                    // If the recipient of the message is not online, save it first.
                     if(! ManageServerThread.isOnline(message.getGetter())){
                         arrayList.add(message);
                         for (int i = 0; i < arrayList.size(); i++) {
@@ -70,17 +67,16 @@ public class ServerConnectThread extends Thread {
 
                     }else {
 
-                        // 先拿到对应的接受者的线程
+                        // Get the thread of the corresponding recipient first
                         String getter = message.getGetter();
                         ServerConnectThread serverConnectThread = ManageServerThread.getServerConnectThread(getter);
-                        // 拿到发送者的线程
+                        // Get the sender's thread
 
-                        //猜测离线文件： 开个线程，while true一直等着用户上线，上线了就break然后发送过去
 
                         ObjectOutputStream oos =
                                 new ObjectOutputStream(serverConnectThread.getSocket().getOutputStream());
 
-                        oos.writeObject(message);   // 如果客户不在线，可以保存到数据库实现离线留言
+                        oos.writeObject(message);   // If the customer is not online, you can save it to the database to leave an offline message
                     }
 //                     if(ManageServerThread.getServerConnectThread(userId2) !=null){
 //                         OutputStream outputStream =
@@ -93,7 +89,7 @@ public class ServerConnectThread extends Thread {
 //                         oos.writeObject(message);
 
 //                } else {
-//                    message.setContent("sorry，未找到该用户");
+//                    message.setContent("sorry，The user was not found");
 //                    ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
 //                    oos.writeObject(message);
 //                }
@@ -125,7 +121,7 @@ public class ServerConnectThread extends Thread {
                 }
 
                  else {
-                     System.out.println("暂不处理～");
+                     System.out.println("Not to deal with for the time being～");
                  }
 
             } catch (Exception e) {
