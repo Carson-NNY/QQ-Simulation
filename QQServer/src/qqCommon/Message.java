@@ -3,14 +3,9 @@ package qqCommon;
 import java.awt.*;
 import java.io.Serializable;
 
-/**
- * @author Carson
- * @Version
- */
 public class Message implements Serializable
-    //作为对象流在两端传输，需要实现序列化
-    // 该类很重要，在传输管道只通过这个类的对象，可以简化很多code
-
+// as an object stream is transmitted at both ends, it is important to serialize this class. In 
+// the transport pipeline, only objects of this class are passed through, which can simplify a lot of code.
 {
     private  String sender;
     private String getter;
@@ -55,7 +50,7 @@ public class Message implements Serializable
         return scrPath;
     }
 
-    private static final long serialVersionUID = 1L;    // 增强稳定性
+    private static final long serialVersionUID = 1L;   
 
     public Message(){}
 
