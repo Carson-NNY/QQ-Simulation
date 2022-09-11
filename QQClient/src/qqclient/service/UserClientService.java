@@ -13,8 +13,6 @@ import java.net.Socket;
 import java.util.Scanner;
 
 /**
- * @author Carson
- *
  * This class is used to complete a series of operations such as login verification of users.
  */
 public class UserClientService {
