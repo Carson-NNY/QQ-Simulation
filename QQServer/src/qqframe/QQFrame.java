@@ -3,8 +3,7 @@ package qqframe;
 import QQServerService.QQServer;
 
 /**
- * @author Carson
- * 启动后台的服务
+ * the main class for starting the Server
  */
 public class QQFrame {
 
