@@ -14,28 +14,25 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * @author Carson
- * 大量知识点，反复复习！！
- */
+
 public class QQServer {
 
     private ServerSocket ss= null;
-    // 创建一个集合存放多个用户，如果是其中的用户登陆，判断为合法的
+    // create a collection to store multiple users. If one of the users logs in, it will be judged to be legal.
     private static HashMap<String,User> validUsers = new HashMap<>();
     private  static ConcurrentHashMap<String, ArrayList<Message>> offlineDb = new ConcurrentHashMap<>();
 
 
-    static {    // static代码块在启动程序时只会初始化一次，节省资源！
+    static {    // The static code block is initialized only once when you start the program, boost efficiencies!
         validUsers.put("100",new User("100","123456"));
         validUsers.put("200",new User("200","123456"));
         validUsers.put("300",new User("300","123456"));
-        validUsers.put("至尊宝",new User("至尊宝","123456"));
-        validUsers.put("紫霞仙子",new User("紫霞仙子","123456"));
-        validUsers.put("牛魔王",new User("牛魔王","123456"));
+        validUsers.put("400",new User("400","123456"));
+        validUsers.put("500",new User("500","123456"));
+        validUsers.put("600",new User("600","123456"));
     }
 
-    // 验证用户是否合法
+    // Verify whether the user is valid
     public boolean checkUser(String userId, String passwd){
         User user = validUsers.get(userId);
         if(user ==null ){
@@ -55,17 +52,17 @@ public class QQServer {
     public QQServer(){
 
         try {
-            System.out.println("Server端在9999端口中监听");
+            System.out.println("The Server port is monitoring in port 9999");
             ss = new ServerSocket(9999);
             Socket socket;
-            new Thread(new MultipleMessagesThread()).start();   // 系统推送消息的线程
+            new Thread(new MultipleMessagesThread()).start();   // The thread on which the system sends the message
 
-            while (true) {  // 这样会保持一直监听端口，能够接受多个Client连接！
-                socket = ss.accept();   // 妙！
+            while (true) {  // This will keep the listening to port and accept multiple Client connections!
+                socket = ss.accept();   
 
                 ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
                 User user = (User) ois.readObject();
-                // 创建message对象准备回复Client端
+                // Create a message object ready to reply to the client
                 Message message =new Message();
                 ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
 
@@ -77,33 +74,32 @@ public class QQServer {
 
                     Iterator<String> iterator = offlineDb.keySet().iterator();
 
-                    // 检查是否有离线消息
+                    // Check if there are offline messages
                     while(iterator.hasNext()){
                         String id = iterator.next().toString();
                         if((user.getUserId().equals(id))){
                             for (int i = 0; i <offlineDb.get(id).size() ; i++) {
                                 ObjectOutputStream oos2 = new ObjectOutputStream(socket.getOutputStream());
                                 oos2.writeObject(offlineDb.get(id).get(i));
-                                System.out.println("发送了离线消息给: "+user.getUserId());
+                                System.out.println("Sent an offline message to: "+user.getUserId());
                                 //offlineDb.get(id).remove(i);
                             }
                         }
                     }
 
-                    // 创建一个线程和客户端保持通讯，而且这个线程应该持有socket对象
+                    // Create a thread that communicates with the client, and the thread should hold the socket object
                     ServerConnectThread serverConnectThread
                             = new ServerConnectThread(socket, user.getUserId());
                     serverConnectThread.start();
-                    // 思考：怎么把这种线程管理方式变成线程池模式？牵涉端口类多线程用不到线程池吗？
 
-                    // 创建一个socket的集合，用于管理多个线程
+                    // Create a collection of socket to manage multiple threads
                     ManageServerThread.addThread(user.getUserId(), serverConnectThread);
 
-                }else{ // 登陆失败
-                    System.out.println("用户 id："+ user.getUserId()+" 验证失败");
+                }else{ // log in failed
+                    System.out.println("user id："+ user.getUserId()+" verify failed");
                     message.setMesType(MessageType.MESSAGE_LOGIN_FAIL);
                     oos.writeObject(message);
-                    // 如果登陆失败,socket要关闭
+                    // If the login fails, close the socket .
                     socket.close();
                 }
 
@@ -111,7 +107,7 @@ public class QQServer {
 
         } catch (Exception e) {
             e.printStackTrace();
-        } finally { // 当Server退出了while循环，意味着socket不再监听，所以要关闭资源（ServerSocket）
+        } finally { // When Server exits the while loop, it means that socket is no longer listening, so close the resource (ServerSocket)
             try {
                 ss.close();
             } catch (IOException e) {
