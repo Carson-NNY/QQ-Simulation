@@ -1,9 +1,5 @@
 package qqCommon;
 
-/**
- * @author Carson
- * @Version
- */
 public interface MessageType {
     String MESSAGE_LOGIN_SUCCESS = "1";
     String MESSAGE_LOGIN_FAIL = "2";
