@@ -15,15 +15,15 @@ import java.util.Scanner;
 /**
  * @author Carson
  *
- * 该类用于完成用户的登陆验证和注册等一系列操作
+ * This class is used to complete a series of operations such as login verification of users.
  */
 public class UserClientService {
 
-    // 因为在其他地方要用到user,socket信息，因此把它做成属性
+    // Because user,socket information is used elsewhere, make it an attribute
     private User u= new User();
     private Socket socket;
 
-    // 根据id和pwd来判断是否登陆成功
+    // see whether the login is successful or not according to id and pwd
     public boolean checkUser(String userId ,String pwd){
         boolean flag = false;
         u.setUserId(userId);
@@ -34,27 +34,27 @@ public class UserClientService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        // 发出user的信息
+        // Send a message from user
         try {
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
             oos.writeObject(u);
 
-            // 读取server发送回来的信息
+            // Read the information sent back by server
             ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
             Message ms = (Message)ois.readObject();
 
             if(ms.getMesType().equals(MessageType.MESSAGE_LOGIN_SUCCESS)){
 
-                // 一旦创建一个和服务器端保持通信的线程： 创建一个类 ClientServiceThread
-                ClientServiceThread cst = new ClientServiceThread(socket);// 这里把9999端口传入
+                // Once you create a thread that keeps communicating with the server: create a class ClientServiceThread
+                ClientServiceThread cst = new ClientServiceThread(socket);// Here, port 9999 is passed in
                 cst.start();
-                // 为了多线程管理，放入集合管理（创建一个线程集合的类）
+                // For multithreaded management, put in collection management (a class that creates a thread collection)
                 ManageThread.addThread(userId,cst);
 
                 flag= true;
 
             }else{
-                // 登陆失败，但是需要关闭socket
+                // Login failed, but socket needs to be closed
                 socket.close();
             }
 
@@ -72,11 +72,12 @@ public class UserClientService {
         message.setSender(u.getUserId());
 
 
-        // 获取这个用户对应的输出流
+        // Get the output stream corresponding to this user
         try {
             OutputStream outputStream =
                     ManageThread.getClientServiceThread(u.getUserId()).getSocket().getOutputStream();
-            // 这里能直接用getUseId，不用传参是因为checkUser已经动态绑定了，User的属性被改动了已经
+            // GetUseId can be used directly here, and there is no need to pass parameters because checkUser has been 
+            // dynamically bound and the properties of User have been changed.
 
             ObjectOutputStream obs = new ObjectOutputStream(outputStream);
             obs.writeObject(message);
@@ -89,12 +90,12 @@ public class UserClientService {
     public void logout(){
         Message message = new Message();
         message.setMesType(MessageType.MESSAGE_CLIENT_EXIT);
-        message.setSender(u.getUserId());// 给Server指定要退出哪个线程
+        message.setSender(u.getUserId());// Specify to Server which thread to exit
 
         try {
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
             oos.writeObject(message);
-            System.out.println(u.getUserId()+" 退出系统");
+            System.out.println(u.getUserId()+" exit");
             System.exit(0);
 
         } catch (IOException e) {
@@ -104,9 +105,9 @@ public class UserClientService {
 
 //    public void privateChat(){
 //        Scanner scanner = new Scanner(System.in);
-//        System.out.print("请输入想聊天的对象： ");
+//        System.out.print("Please enter the person you want to chat with： ");
 //        String obj  = scanner.next();
-//        System.out.print("请输入想说的话： ");
+//        System.out.print("Please enter what you want to say： ");
 //        String sentence = scanner.next();
 //
 //        String fullContent =obj+":"+sentence;
@@ -119,7 +120,7 @@ public class UserClientService {
 //        try {
 //            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
 //            oos.writeObject(message);
-//            System.out.println(u.getUserId()+ " 对"+obj+" 说： "+sentence);
+//            System.out.println(u.getUserId()+ " says to "+obj+" ："+sentence);
 //
 //
 //        } catch (IOException e) {
